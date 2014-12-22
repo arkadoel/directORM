@@ -8,3 +8,7 @@ class vPrincipal(QtGui.QMainWindow):
         super(vPrincipal, self).__init__(parent=None)
         self.setGeometry(100, 100, 600, 400)
         self.setWindowTitle(const.APP_NAME)
+
+
+
+
