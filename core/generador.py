@@ -1,0 +1,188 @@
+__author__ = 'Arkadoel'
+
+import constantes as const
+import sys
+import os
+import shutil
+from core.tableObjects import Table, Column
+
+class Generador:
+    '''
+    Clase encargada de la generacion de los objetos y la salida a
+    archivos de los mismos
+    '''
+    def __init__(self):
+        self.diccionario_objetos=dict()
+        self.dir_destino = const.DIRECTORIO_DESTINO
+        self.comprobar_dir_destino()
+
+    def agregar_diccionario(self, diccionario=None):
+        if diccionario is not None:
+            self.diccionario_objetos = diccionario
+
+    def comprobar_dir_destino(self):
+        '''
+        Comprueba si existe el directorio donde se generaran los archivos,
+        en caso de no existir, se creara
+        :return: True or False
+        '''
+        try:
+            print('Comprobando lugar de destino')
+            self.dir_destino += '/directORM'
+
+            if os.path.isdir(self.dir_destino) is False:
+                os.makedirs(self.dir_destino)
+        except:
+            print(sys.exc_info()[0])
+            return False
+
+        return True
+
+    def generar_objetos(self):
+        print('Generando objetos-entidad...')
+        if self.diccionario_objetos is not None \
+            and self.diccionario_objetos.__len__()>0:
+
+            try:
+                print('\tDetectando __init__.py')
+                archivo_init = self.dir_destino + '/__init__.py'
+                if os.path.isfile(archivo_init) is True:
+                    #archivo init existente, hay que modificarlo
+                    os.remove(archivo_init)
+
+                #copiamos la plantilla al directorio de destino
+                print('\tCopiando plantilla __init__')
+                shutil.copy2(const.TEMPLATE_INIT, archivo_init)
+
+                self.generar_clases_objeto()
+
+            except :
+                print(sys.exc_info()[0])
+                raise
+
+    def generar_insert(self, columnas, f, nombreTabla):
+        f.write(self.espacio(1) + 'INSERT = \'\'\'\n')
+        f.write(self.espacio(2) + 'insert into ' + nombreTabla + '\n')
+        columnasForWrite = self.espacio(2) + '('
+
+        for columna in columnas:
+            assert isinstance(columna, Column)
+            columnasForWrite += ' ' + columna.colname + ','
+
+        columnasForWrite = columnasForWrite[:-1] + ')\n'
+        columnasForWrite += self.espacio(2) + 'values ('
+
+        for i in range(len(columnas)):
+            columnasForWrite += '?,'
+
+        columnasForWrite = columnasForWrite[:-1] + ')\n'
+        f.write(columnasForWrite)
+        f.write(self.espacio(2) + '\'\'\'\n')
+
+    def put_keys_query(self, columnas, f) -> str:
+        numeroKeys = 0
+        txt =''
+        for columna in columnas:
+            assert isinstance(columna, Column)
+
+            if columna.is_key is True:
+                if numeroKeys > 0:
+                    txt += ' and '
+                txt += columna.colname + ' = ?'
+                numeroKeys += 1
+        return txt
+
+    def generar_delete(self, columnas, f, nombreTabla):
+        f.write(self.espacio(1) + 'DELETE = \'delete from ' + nombreTabla)
+        f.write(' where ')
+
+        f.write(self.put_keys_query(columnas, f))
+        f.write('\'\n')
+
+    def generar_select(self, f, nombreTabla):
+        f.write(self.espacio(1) + 'SELECT = \'select * from ' +
+                nombreTabla + '\'\n')
+
+    def generar_update(self, columnas, f, nombreTabla):
+        f.write(self.espacio(1) + 'UPDATE = \'\'\'\n')
+        f.write(self.espacio(2) + 'update ' + nombreTabla + ' set ( \n')
+        columnasForWrite = ''
+        for columna in columnas:
+            assert isinstance(columna, Column)
+            columnasForWrite += self.espacio(2) + columna.colname + ' = ?,\n'
+        columnasForWrite = columnasForWrite[:-2] + ')\n'
+        columnasForWrite += self.espacio(2) + 'where  '
+        columnasForWrite += self.put_keys_query(columnas, f) + '\n'
+        f.write(columnasForWrite)
+        f.write(self.espacio(2) + '\'\'\'\n')
+
+    def generar_clases_objeto(self):
+        try:
+
+            print('Generando clases-objeto')
+            for nombreObjeto, tabla in self.diccionario_objetos.items():
+                print('\tGenerando objetos de tabla: ' + nombreObjeto)
+                nombreTabla = self.plural(palabra=nombreObjeto)
+                nombreArchivo = self.dir_destino + '/for' + nombreTabla + '.py'
+
+                assert isinstance(tabla, Table)
+
+                #generamos el archivo
+                if os.path.isfile(nombreArchivo) is True:
+                    os.remove(nombreArchivo)
+
+                with open(nombreArchivo, 'w') as f:
+                    inicio = const.FOR_IMPORTS.replace('@nombreObjeto', nombreObjeto)
+                    f.write(inicio)
+                    columnas = tabla.columns
+
+                    for columna in columnas:
+                        assert isinstance(columna, Column)
+
+                        f.write(self.espacio(2) + 'self.'+ columna.colname)
+
+                        if columna.type == 'int':
+                            f.write(' = -1\n')
+                        elif columna.type == 'varchar':
+                            f.write(' = \'\'\n')
+                        elif columna.type == 'boolean':
+                            f.write(' = False\n')
+
+                    f.write('\nclass Tb' + nombreTabla + ':\n')
+
+                    self.generar_insert(columnas, f, nombreTabla)
+                    self.generar_delete(columnas, f, nombreTabla)
+                    self.generar_select(f, nombreTabla)
+                    self.generar_update(columnas, f, nombreTabla)
+
+
+
+
+
+                    f.close()
+        except:
+            print(sys.exc_info()[0])
+            raise
+
+    def plural(self, palabra=None):
+        if palabra is not None:
+            final = palabra[-1]
+            #print('Letra final: ' + final)
+            if final == 'a' or final == 'e' \
+                    or final == 'i' or final == 'o' \
+                    or final == 'u':
+                palabra += 's'
+            else:
+                palabra += 'es'
+
+            return palabra
+
+    def espacio(self, numero=None):
+        txt = ''
+        if numero is None:
+            numero = 1
+
+        for n in range(numero):
+            txt += '    '
+
+        return txt

@@ -1,15 +1,16 @@
 <?xml version="1.0"?>
 <database>
-    <table name="Personas">
+    <table name="Persona">
         <column name="id" key="True" type="int" />
         <column name="nombre" type="varchar" />
         <column name="apellidos" type="varchar" />
         <column name="edad" type="int" />
         <column name="casado" type="boolean" />
     </table>
-    <table name="Telefonos">
+    <table name="Telefono">
         <column name="id" key="True" type="int" />
         <column name="numero" type="int" />
-        <column name="descripcion" type="boolean" />
+        <column name="descripcion" type="varchar" />
+        <column name="idPersona" type="int" key="True" />
     </table>
 </database>
