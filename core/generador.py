@@ -155,7 +155,12 @@ class Generador:
                     self.generar_select(f, nombreTabla)
                     self.generar_update(columnas, f, nombreTabla)
 
+                    f.write(self.espacio(1) + 'def __init__(self):\n')
+                    f.write(self.espacio(2) + 'self.gestorDB = directORM.db()\n\n')
 
+                    f.write(self.espacio(1) + 'def eliminar(self, id):\n')
+                    f.write(self.espacio(2) + 'sql = self.__DELETE__.replace(\'?\', str(id))\n')
+                    f.write(self.espacio(2) + 'self.gestorDB.ejecutarSQL(sql, ())\n')
 
 
 
