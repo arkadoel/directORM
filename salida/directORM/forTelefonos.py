@@ -14,19 +14,34 @@ class Telefono:
 class TbTelefonos:
     INSERT = '''
         insert into Telefonos
-        ( id, numero, descripcion, idPersona)
-        values (?,?,?,?)
+        ( numero, descripcion)
+        values (?,?)
         '''
     DELETE = 'delete from Telefonos where id = ? and idPersona = ?'
     SELECT = 'select * from Telefonos'
     UPDATE = '''
-        update Telefonos set ( 
-        id = ?,
+        update Telefonos set  
         numero = ?,
-        descripcion = ?,
-        idPersona = ?)
+        descripcion = ?
         where  id = ? and idPersona = ?
         '''
     def __init__(self):
-        self.gestorDB = directORM.db()    def eliminar(self, id):
-        sql = self.__DELETE__.replace('?', str(id))        self.gestorDB.ejecutarSQL(sql, ())
+        self.gestorDB = directORM.Db()
+
+    def eliminar(self, id):
+        sql = self.DELETE.replace('?', str(id))
+        self.gestorDB.ejecutarSQL(sql, ())
+
+    def getTelefono(self, id=None, idPersona=None):
+        sql = self.SELECT + " where id=None, idPersona=None;"
+        fila = self.gestorDB.consultaUnicaSQL(sql)
+        if fila is None:
+            return None
+        else: 
+            o = Telefono()
+            o.id = fila['id']
+            o.numero = fila['numero']
+            o.descripcion = fila['descripcion']
+            o.idPersona = fila['idPersona']
+            return o
+

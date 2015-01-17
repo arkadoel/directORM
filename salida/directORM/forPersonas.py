@@ -15,23 +15,37 @@ class Persona:
 class TbPersonas:
     INSERT = '''
         insert into Personas
-        ( id, nombre, apellidos, edad, casado)
-        values (?,?,?,?,?)
+        ( nombre, apellidos, edad, casado)
+        values (?,?,?,?)
         '''
     DELETE = 'delete from Personas where id = ?'
     SELECT = 'select * from Personas'
     UPDATE = '''
-        update Personas set ( 
-        id = ?,
+        update Personas set  
         nombre = ?,
         apellidos = ?,
         edad = ?,
-        casado = ?)
+        casado = ?
         where  id = ?
         '''
     def __init__(self):
-        self.gestorDB = directORM.db()
+        self.gestorDB = directORM.Db()
 
     def eliminar(self, id):
-        sql = self.__DELETE__.replace('?', str(id))
+        sql = self.DELETE.replace('?', str(id))
         self.gestorDB.ejecutarSQL(sql, ())
+
+    def getPersona(self, id=None):
+        sql = self.SELECT + " where id=None;"
+        fila = self.gestorDB.consultaUnicaSQL(sql)
+        if fila is None:
+            return None
+        else: 
+            o = Persona()
+            o.id = fila['id']
+            o.nombre = fila['nombre']
+            o.apellidos = fila['apellidos']
+            o.edad = fila['edad']
+            o.casado = fila['casado']
+            return o
+

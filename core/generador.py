@@ -67,13 +67,16 @@ class Generador:
 
         for columna in columnas:
             assert isinstance(columna, Column)
-            columnasForWrite += ' ' + columna.colname + ','
+            if columna.is_key is False:
+                columnasForWrite += ' ' + columna.colname + ','
 
         columnasForWrite = columnasForWrite[:-1] + ')\n'
         columnasForWrite += self.espacio(2) + 'values ('
 
-        for i in range(len(columnas)):
-            columnasForWrite += '?,'
+        for columna in columnas:
+            assert isinstance(columna, Column)
+            if columna.is_key is False:
+                columnasForWrite += '?,'
 
         columnasForWrite = columnasForWrite[:-1] + ')\n'
         f.write(columnasForWrite)
@@ -105,16 +108,54 @@ class Generador:
 
     def generar_update(self, columnas, f, nombreTabla):
         f.write(self.espacio(1) + 'UPDATE = \'\'\'\n')
-        f.write(self.espacio(2) + 'update ' + nombreTabla + ' set ( \n')
+        f.write(self.espacio(2) + 'update ' + nombreTabla + ' set  \n')
         columnasForWrite = ''
         for columna in columnas:
             assert isinstance(columna, Column)
-            columnasForWrite += self.espacio(2) + columna.colname + ' = ?,\n'
-        columnasForWrite = columnasForWrite[:-2] + ')\n'
+            if columna.is_key is False:
+                columnasForWrite += self.espacio(2) + columna.colname + ' = ?,\n'
+        columnasForWrite = columnasForWrite[:-2] + '\n'
         columnasForWrite += self.espacio(2) + 'where  '
         columnasForWrite += self.put_keys_query(columnas, f) + '\n'
         f.write(columnasForWrite)
         f.write(self.espacio(2) + '\'\'\'\n')
+
+    def metodo_eliminar(self, f):
+        f.write(self.espacio(1) + 'def eliminar(self, id):\n')
+        f.write(self.espacio(2) + 'sql = self.DELETE.replace(\'?\', str(id))\n')
+        f.write(self.espacio(2) + 'self.gestorDB.ejecutarSQL(sql, ())\n\n')
+
+    def metodo_getObjeto(self, columnas, f, nombreObjeto):
+        print('Procediendo a escribir getObjeto...')
+        f.write(self.espacio(1) + 'def get' + nombreObjeto + '(self')
+        # escribir ids
+        ids = list()
+        for columna in columnas:
+            assert isinstance(columna, Column)
+            if columna.is_key is True:
+                f.write(', ' + columna.colname + '=None')
+                ids.append(columna.colname)
+        f.write('):\n')
+        f.write(self.espacio(2) + 'sql = self.SELECT + \" where ')
+        i = 0
+        for ide in ids:
+            if i > 0:
+                f.write(', ' + ide + '=None')
+            else:
+                f.write(ide + '=None')
+            i += 1
+        f.write(';\"\n')
+        f.write(self.espacio(2) + 'fila = self.gestorDB.consultaUnicaSQL(sql)\n')
+        f.write(self.espacio(2) + 'if fila is None:\n')
+        f.write(self.espacio(3) + 'return None\n')
+        f.write(self.espacio(2) + 'else: \n')
+        f.write(self.espacio(3) + 'o = ' + nombreObjeto + '()\n')
+        for columna in columnas:
+            assert isinstance(columna, Column)
+            f.write(self.espacio(3) + 'o.' + columna.colname)
+            f.write(' = fila[\'' + columna.colname + '\']\n')
+
+        f.write(self.espacio(3) + 'return o\n\n')
 
     def generar_clases_objeto(self):
         try:
@@ -156,11 +197,11 @@ class Generador:
                     self.generar_update(columnas, f, nombreTabla)
 
                     f.write(self.espacio(1) + 'def __init__(self):\n')
-                    f.write(self.espacio(2) + 'self.gestorDB = directORM.db()\n\n')
+                    f.write(self.espacio(2) + 'self.gestorDB = directORM.Db()\n\n')
 
-                    f.write(self.espacio(1) + 'def eliminar(self, id):\n')
-                    f.write(self.espacio(2) + 'sql = self.__DELETE__.replace(\'?\', str(id))\n')
-                    f.write(self.espacio(2) + 'self.gestorDB.ejecutarSQL(sql, ())\n')
+                    self.metodo_eliminar(f)
+
+                    self.metodo_getObjeto(columnas, f, nombreObjeto)
 
 
 

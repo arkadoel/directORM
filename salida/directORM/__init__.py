@@ -62,8 +62,11 @@ class Db:
         self.conectar()
         cur = self.conexion.cursor()
         print(sql)
-        cur.execute(sql)
-        unico = cur.fetchone()
+        try:
+            cur.execute(sql)
+            unico = cur.fetchone()
+        except:
+            print('Error al ejecutar la consulta unica')
         self.cerrarDB()
         return unico
 

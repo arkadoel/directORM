@@ -25,7 +25,7 @@ if __name__ == '__main__':
     elif nparametros >1:
         parametros = sys.argv[1:]
 
-        if parametros[0] == '--xml'  and nparametros >1:
+        if parametros[0] == '--xml' and nparametros >1:
             rutaXml = str(parametros[1])
             if os.path.isfile(rutaXml) is True:
                 xml = Xml(ruta=rutaXml)
