@@ -12,9 +12,10 @@ de cara a distintos lenguajes de programacion.
 de cara a despues interpretarlo y generar automaticamente el esquema
 de objetos y las sentencias SQL 
    
-###Errores###
-* Quitar parentesis en sentencias update
-* Quitar los ids en sentencias insert y update
+###<span style='color:red'>Errores</span>###
+* Quitar parentesis en sentencias update **<span style='color:green'>[hecho]</span>**
+* Quitar los ids en sentencias insert y update **<span style='color:green'>[hecho]</span>**
+* Falla cuando la ultima columna es una clave **<span style='color:#D2691E'>[pendiente]</span>**
 
     
     

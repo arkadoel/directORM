@@ -10,7 +10,8 @@
     <table name="Telefono">
         <column name="id" key="True" type="int" />
         <column name="numero" type="int" />
-        <column name="descripcion" type="varchar" />
         <column name="idPersona" type="int" key="True" />
+        <column name="descripcion" type="varchar" />
+
     </table>
 </database>
