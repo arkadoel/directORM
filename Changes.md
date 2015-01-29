@@ -17,6 +17,10 @@ de objetos y las sentencias SQL
 * Quitar los ids en sentencias insert y update **<span style='color:green'>[hecho]</span>**
 * Falla cuando la ultima columna es una clave **<span style='color:#D2691E'>[pendiente]</span>**
 
+29-Ene-2015
+>Se añade que se generen sentencias SQL en un archivo y la deteccion si una primary key
+es o no auto_incrementable
+
     
     
 

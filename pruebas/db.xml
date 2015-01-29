@@ -1,17 +1,77 @@
 <?xml version="1.0"?>
 <database>
-    <table name="Persona">
-        <column name="id" key="True" type="int" />
+    <table name="Empleado">
+        <column name="idEmpleado" key="True" type="int" auto_increment="True" />
         <column name="nombre" type="varchar" />
         <column name="apellidos" type="varchar" />
-        <column name="edad" type="int" />
-        <column name="casado" type="boolean" />
+        <column name="email" type="varchar" />
+        <column name="tlf_fijo" type="varchar" />
+        <column name="tlf_movil" type="varchar" />
+        <column name="direccion" type="varchar" />
+        <column name="foto_empleado" type="varchar" />
+        <column name="banco" type="varchar" />
+        <column name="cuenta_bancaria" type="varchar" />
+        <column name="sexo" type="varchar" />
+        <column name="password" type="varchar" />
+        <column name="login_name" type="varchar" />
+        <column name="cargo" type="varchar" >
+            <!--
+            chef, cocinero, maître, camarero, gerente, dueño, repartidor
+            -->
+        </column>
     </table>
-    <table name="Telefono">
-        <column name="id" key="True" type="int" />
-        <column name="numero" type="int" />
-        <column name="idPersona" type="int" key="True" />
-        <column name="descripcion" type="varchar" />
+    <table name="Horario">
+        <column name="idHorario" key="True" auto_increment="True" type="int" />
+        <column name="idEmpleado" key="True" type="int" />
+        <column name="dia_semana" type="varchar" />
+        <column name="hora_entrada" type="varchar" />
+        <column name="hora_salida" type="varchar" />
+    </table>
+    <table name="Producto">
+        <column name="idProducto" type="int" auto_increment="True" key="True" />
+        <column name="nombre_producto" type="varchar" />
+        <column name="precio_unidad" type="float" />
+        <column name="iva" type="int" />
+        <column name="foto_producto" type="varchar" />
+        <column name="ingredientes" type="varchar" />
+        <column name="familia" type="varchar" >
+            <!--
+             primeros, segundos, postres, entremeses....
+            -->
+        </column>
+    </table>
+    <table name="Proveedor">
+        <column name="idProveedor" key="True" auto_increment="True" type="int" />
+        <column name="nombre" type="varchar" />
+        <column name="email" type="varchar" />
+        <column name="tlf_fijo" type="varchar" />
+        <column name="tlf_movil" type="varchar" />
+        <column name="tlf_fijo2" type="varchar" />
+        <column name="tlf_movil2" type="varchar" />
+        <column name="banco" type="varchar" />
+        <column name="cuenta_bancaria" type="varchar" />
+        <column name="direccion" type="varchar" />
+        <column name="foto_logo" type="varchar" />
+    </table>
+    <table name="Productos_Proveedor">
+        <column name="id" auto_increment="True" key="True" type="int" />
+        <column name="id_producto" type="int" key="True" />
+        <column name="id_proveedor" type="int" key="True" />
+        <column name="fecha" type="date"/>
+        <column name="cantidad" type="float" />
+    </table>
+    <table name="Orden">
+        <column name="idOrden" key="True" type="int" auto_increment="True" />
+        <column name="idEmpleado" key="True" type="int" />
+        <column name="num_ticket" type="varchar"/>
+        <column name="fecha" type="date"/>
+        <column name="hora" type="date"/>
+        <column name="lugar" type="varchar"/>
 
+    </table>
+    <table name="Productos_en_Orden">
+        <column name="idOrden" type="int" key="True"/>
+        <column name="idProducto" key="True" type="int" />
+        <column name="cantidad" type="float"/>
     </table>
 </database>

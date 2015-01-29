@@ -55,10 +55,97 @@ class Generador:
                 shutil.copy2(const.TEMPLATE_INIT, archivo_init)
 
                 self.generar_clases_objeto()
+                self.generar_SQL()
 
             except :
                 print(sys.exc_info()[0])
                 raise
+
+    def generar_SQL(self):
+        print('Generando sentencias SQL...')
+        if self.diccionario_objetos is not None \
+            and self.diccionario_objetos.__len__()>0:
+
+            try:
+                print('\tDetectando sql_sentences.sql')
+                archivo_sql = self.dir_destino + '/sql_sentences.sql'
+
+                if os.path.isfile(archivo_sql) is True:
+                        os.remove(archivo_sql)
+
+                with open(archivo_sql, 'a') as f:
+                    f.write('PRAGMA foreign_keys=OFF;\n')
+                    f.write('BEGIN TRANSACTION;\n')
+                    f.write('/*\n\tArchivo generado por directORM')
+                    f.write('\n\tFecha: ' + const.get_fecha() + '\n*/\n\n')
+
+                    for nombreObjeto, tabla in self.diccionario_objetos.items():
+                        print('\r\n\t[' + nombreObjeto + ']')
+                        nombreTabla = self.plural(palabra=nombreObjeto)
+
+                        assert isinstance(tabla, Table)
+
+                        f.write('DROP TABLE IF EXISTS \"' + nombreTabla + '\";\n')
+
+                        f.write('CREATE TABLE \"' + nombreTabla + '\" (\n')
+
+                        columnas = tabla.columns
+
+                        ids = list()
+                        col_normal = list()
+                        for columna in columnas:
+                            assert isinstance(columna, Column)
+                            if columna.is_key is True:
+                                ids.append((columna.colname,columna.type, columna.is_autoIncrement))
+                            else:
+                                col_normal.append((columna.colname,columna.type))
+
+                        for ide, tipo, incrementable in ids:
+                            f.write(self.espacio(1) + '\"' + ide + '\" ')
+
+                            tipo = self.tipo_db(tipo_xml=tipo)
+                            if incrementable is True:
+                                f.write(tipo + ' PRIMARY KEY AUTOINCREMENT')
+                            else:
+                                f.write(tipo + ' KEY')
+
+                            f.write(',\n')
+
+                        posicion = 1
+
+                        for nombre, tipo in col_normal:
+                            f.write(self.espacio(1) + '\"' + nombre + '\" ')
+                            tipo = self.tipo_db(tipo_xml=tipo)
+                            f.write(tipo)
+                            if posicion < len(col_normal):
+                                f.write(',\n')
+                            posicion += 1
+
+                        f.write('\n);\n\n')
+                    f.write('\nCOMMIT;')
+
+
+            except :
+                print(sys.exc_info()[0])
+                raise
+
+    def tipo_db(self, tipo_xml=None):
+        '''
+        Devuelve el tipo correspondiente para la consulta SQL
+        en funcion de lo pasado por el xml
+        :param tipo_xml:
+        :return:
+        '''
+        if tipo_xml == 'int':
+            return 'INTEGER'
+        elif tipo_xml == 'varchar':
+            return 'VARCHAR'
+        elif tipo_xml == 'boolean':
+            return 'BOOL'
+        elif tipo_xml == 'float':
+            return 'REAL'
+        elif tipo_xml == 'date':
+            return 'DATE'
 
     def generar_insert(self, columnas, f, nombreTabla):
         print('\tGenerando insert...')
@@ -126,7 +213,7 @@ class Generador:
 
     def metodo_eliminar(self, f):
         print('\tGenerando metodo eliminar...')
-        f.write(self.espacio(1) + 'def eliminar(self, id):\n')
+        f.write(self.espacio(1) + 'def remove(self, id):\n')
         f.write(self.espacio(2) + 'sql = self.DELETE.replace(\'?\', str(id))\n')
         f.write(self.espacio(2) + 'self.gestorDB.ejecutarSQL(sql, ())\n\n')
 
@@ -188,11 +275,18 @@ class Generador:
                         f.write(self.espacio(2) + 'self.'+ columna.colname)
 
                         if columna.type == 'int':
-                            f.write(' = -1\n')
+                            if columna.is_key is True:
+                                f.write(' = -1\n')
+                            else:
+                                f.write(' = 0\n')
                         elif columna.type == 'varchar':
                             f.write(' = \'\'\n')
                         elif columna.type == 'boolean':
                             f.write(' = False\n')
+                        elif columna.type == 'float':
+                            f.write(' = 0.0\n')
+                        elif columna.type == 'date':
+                            f.write(' = \'\'\n')
 
                     f.write('\nclass Tb' + nombreTabla + ':\n')
 
@@ -210,7 +304,7 @@ class Generador:
 
                     f.write('\n')
                     print('\tProcediendo a poner metodo Agregar...')
-                    f.write(self.espacio(1) + 'def agregar(self, ' + str(nombreObjeto).lower() + '=None):\n')
+                    f.write(self.espacio(1) + 'def save(self, ' + str(nombreObjeto).lower() + '=None):\n')
                     f.write(self.espacio(2) + 'if ' + str(nombreObjeto).lower() + ' is not None:\n')
                     f.write(self.espacio(3) + 'if self.get_' + str(nombreObjeto).lower() + '(' )
                     ids = list()
@@ -270,16 +364,7 @@ class Generador:
                                 j += 1
 
                             f.write('))\n')
-
-
-
-
-
-
-
-
-
-
+                    f.write('\n\n')
                     f.close()
         except:
             print(sys.exc_info()[0])

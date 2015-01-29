@@ -44,6 +44,10 @@ class Xml:
                     clave = bool(xmlcolumna.attrib['key'])
                     if clave is True:
                         col.is_key = True
+                        if 'auto_increment' in xmlcolumna.attrib.keys():
+                            auto_increment = bool(xmlcolumna.attrib['auto_increment'])
+                            if auto_increment is True:
+                                col.is_autoIncrement = True
 
                 tb.columns.append(col)
             tablas[tb.table_name] = tb

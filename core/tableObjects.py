@@ -22,4 +22,5 @@ class Column:
         self.colname = ''
         self.is_key = False
         self.type = 'varchar'
+        self.is_autoIncrement = False
 
