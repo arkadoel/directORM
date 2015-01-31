@@ -10,7 +10,6 @@ TEMPLATE_INIT = './templates/__init__.py'
 
 FOR_IMPORTS = '''
 import sqlite3
-import sys
 import directORM
 
 class @nombreObjeto:

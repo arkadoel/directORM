@@ -318,13 +318,6 @@ class Generador:
         f.write(self.espacio(2) + 'if fila is None:\n')
         f.write(self.espacio(3) + 'return None\n')
         f.write(self.espacio(2) + 'else: \n')
-        '''
-        f.write(self.espacio(3) + 'o = ' + nombreObjeto + '()\n')
-        for columna in columnas:
-            assert isinstance(columna, Column)
-            f.write(self.espacio(3) + 'o.' + columna.colname)
-            f.write(' = fila[\'' + columna.colname + '\']\n')
-        '''
         f.write(self.espacio(3) + 'o = self.mapear_objeto(fila)\n')
         f.write(self.espacio(3) + 'return o\n\n')
 
@@ -423,8 +416,6 @@ class Generador:
         except:
             print(sys.exc_info()[0])
             raise
-
-
 
     def plural(self, palabra=None):
         if palabra is not None:
