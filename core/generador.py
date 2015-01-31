@@ -211,11 +211,88 @@ class Generador:
         f.write(columnasForWrite)
         f.write(self.espacio(2) + '\'\'\'\n')
 
-    def metodo_eliminar(self, f):
+    def metodo_eliminar(self, f, columnas, nombreObjeto):
         print('\tGenerando metodo eliminar...')
-        f.write(self.espacio(1) + 'def remove(self, id):\n')
-        f.write(self.espacio(2) + 'sql = self.DELETE.replace(\'?\', str(id))\n')
-        f.write(self.espacio(2) + 'self.gestorDB.ejecutarSQL(sql, ())\n\n')
+        minusculas = str(nombreObjeto).lower()
+        f.write(self.espacio(1) + 'def remove(self, ' + minusculas + ' ):\n')
+        #f.write(self.espacio(2) + 'sql = self.DELETE.replace(\'?\', str(id))\n')
+        f.write(self.espacio(2) + 'sql = self.DELETE\n')
+        tupla = ()
+        cadenas = list()
+        for columna in columnas:
+            assert isinstance(columna, Column)
+
+            if columna.is_key is True:
+                cadena =  minusculas + '.' + columna.colname
+                cadenas.append(cadena)
+        tupla = tuple(str(texto).replace('\'', '') for texto in cadenas)
+
+        textoFinal = str(tupla.__str__()).replace("'", "").replace(",)", ")")
+
+        f.write(self.espacio(2) + 'self.gestorDB.ejecutarSQL(sql, ' + textoFinal + ')\n\n')
+
+    def metodo_save(self, f, nombreObjeto, columnas):
+        print('\tProcediendo a poner metodo Agregar...')
+        f.write(self.espacio(1) + 'def save(self, ' + str(nombreObjeto).lower() + '=None):\n')
+        f.write(self.espacio(2) + 'if ' + str(nombreObjeto).lower() + ' is not None:\n')
+        f.write(self.espacio(3) + 'if self.get_' + str(nombreObjeto).lower() + '(' )
+        ids = list()
+        for columna in columnas:
+            assert isinstance(columna, Column)
+            if columna.is_key is True:
+                ids.append(columna.colname)
+
+        i = 0
+        for ide in ids:
+            if i > 0:
+                f.write(', ' + str(nombreObjeto).lower() + '.' + ide )
+            else:
+                f.write(str(nombreObjeto).lower() + '.' + ide )
+            i += 1
+        f.write(') is None:\n')
+
+        f.write(self.espacio(4) + 'sql = self.INSERT\n')
+        f.write(self.espacio(4) + 'self.gestorDB.ejecutarSQL(sql, (\n')
+        i = 0
+        for columna in columnas:
+            assert isinstance(columna, Column)
+
+            if columna.is_key is False:
+                f.write(self.espacio(5) + str(nombreObjeto).lower() + '.' + columna.colname)
+
+                if (i+1) < len(columnas):
+                    f.write(',\n')
+
+            i += 1
+
+        f.write('))\n')
+
+
+        f.write(self.espacio(3) + 'else:\n')
+
+        f.write(self.espacio(4) + 'sql = self.UPDATE\n')
+        f.write(self.espacio(4) + 'self.gestorDB.ejecutarSQL(sql, (\n')
+        i = 0
+        for columna in columnas:
+            assert isinstance(columna, Column)
+            i += 1
+            if columna.is_key is False:
+                f.write(self.espacio(5) + str(nombreObjeto).lower() + '.' + columna.colname)
+
+                if i < len(columnas):
+                    f.write(',\n')
+
+            if i >= len(columnas):
+                f.write(',\n')
+                j = 0
+                for ide in ids:
+                    if j > 0:
+                        f.write(',\n' + self.espacio(5) + str(nombreObjeto).lower() + '.' + ide )
+                    else:
+                        f.write(self.espacio(5) + str(nombreObjeto).lower() + '.' + ide )
+                    j += 1
+
+                f.write('))\n')
 
     def metodo_getObjeto(self, columnas, f, nombreObjeto):
         print('\tProcediendo a escribir getObjeto...')
@@ -241,13 +318,45 @@ class Generador:
         f.write(self.espacio(2) + 'if fila is None:\n')
         f.write(self.espacio(3) + 'return None\n')
         f.write(self.espacio(2) + 'else: \n')
+        '''
         f.write(self.espacio(3) + 'o = ' + nombreObjeto + '()\n')
         for columna in columnas:
             assert isinstance(columna, Column)
             f.write(self.espacio(3) + 'o.' + columna.colname)
             f.write(' = fila[\'' + columna.colname + '\']\n')
-
+        '''
+        f.write(self.espacio(3) + 'o = self.mapear_objeto(fila)\n')
         f.write(self.espacio(3) + 'return o\n\n')
+
+    def metodo_getLista(self, columnas, f, nombreObjeto):
+        print('\tProcediendo a escribir getObjeto...')
+        nombreMetodo = self.plural(str(nombreObjeto).lower())
+        f.write(self.espacio(1) + 'def get_' + nombreMetodo + '(self, filtro=None):\n')
+        f.write(self.espacio(2) + 'if filtro is None:\n')
+        f.write(self.espacio(3) + 'sql = self.SELECT\n')
+        f.write(self.espacio(2) + 'else: \n')
+        f.write(self.espacio(3) + 'sql = self.SELECT + \" where \" + filtro\n')
+
+        f.write(self.espacio(2) + 'filas = self.gestorDB.consultaSQL(sql)\n')
+        f.write(self.espacio(2) + 'objetos = list()\n')
+        f.write(self.espacio(2) + 'for fila in filas:\n')
+        
+        f.write(self.espacio(3) + 'o = self.mapear_objeto(fila)\n')
+        f.write(self.espacio(3) + 'objetos.append(o)\n\n')
+        f.write(self.espacio(2) + 'return objetos\n\n')
+
+
+    def metodo_mapear_objeto(self, f, columnas, nombreObjeto):
+        f.write(self.espacio(1) + 'def mapear_objeto(self, fila=None):\n')
+        f.write(self.espacio(2) + 'if fila is None:\n')
+        f.write(self.espacio(3) + 'return None\n')
+        f.write(self.espacio(2) + 'else:\n')
+        f.write(self.espacio(3) + 'o = ' + nombreObjeto + '()\n')
+        for columna in columnas:
+            assert isinstance(columna, Column)
+            f.write(self.espacio(3) + 'o.' + columna.colname)
+            f.write(' = fila[\'' + columna.colname + '\']\n')
+        f.write(self.espacio(3) + 'return o\n')
 
     def generar_clases_objeto(self):
         try:
@@ -298,77 +407,24 @@ class Generador:
                     f.write(self.espacio(1) + 'def __init__(self):\n')
                     f.write(self.espacio(2) + 'self.gestorDB = directORM.Db()\n\n')
 
-                    self.metodo_eliminar(f)
+                    self.metodo_eliminar(f, columnas, nombreObjeto)
 
                     self.metodo_getObjeto(columnas, f, nombreObjeto)
-
                     f.write('\n')
-                    print('\tProcediendo a poner metodo Agregar...')
-                    f.write(self.espacio(1) + 'def save(self, ' + str(nombreObjeto).lower() + '=None):\n')
-                    f.write(self.espacio(2) + 'if ' + str(nombreObjeto).lower() + ' is not None:\n')
-                    f.write(self.espacio(3) + 'if self.get_' + str(nombreObjeto).lower() + '(' )
-                    ids = list()
-                    for columna in columnas:
-                        assert isinstance(columna, Column)
-                        if columna.is_key is True:
-                            ids.append(columna.colname)
+                    self.metodo_save(f, nombreObjeto, columnas)
+                    f.write('\n')
+                    self.metodo_mapear_objeto(f, columnas, nombreObjeto)
+                    f.write('\n')
+                    self.metodo_getLista(columnas, f, nombreObjeto)
+                    f.write('\n')
 
-                    i = 0
-                    for ide in ids:
-                        if i > 0:
-                            f.write(', ' + str(nombreObjeto).lower() + '.' + ide )
-                        else:
-                            f.write(str(nombreObjeto).lower() + '.' + ide )
-                        i += 1
-                    f.write(') is None:\n')
-
-                    f.write(self.espacio(4) + 'sql = self.INSERT\n')
-                    f.write(self.espacio(4) + 'self.gestorDB.ejecutarSQL(sql, (\n')
-                    i = 0
-                    for columna in columnas:
-                        assert isinstance(columna, Column)
-
-                        if columna.is_key is False:
-                            f.write(self.espacio(5) + str(nombreObjeto).lower() + '.' + columna.colname)
-
-                            if (i+1) < len(columnas):
-                                f.write(',\n')
-
-                        i += 1
-
-                    f.write('))\n')
-
-
-                    f.write(self.espacio(3) + 'else:\n')
-
-                    f.write(self.espacio(4) + 'sql = self.UPDATE\n')
-                    f.write(self.espacio(4) + 'self.gestorDB.ejecutarSQL(sql, (\n')
-                    i = 0
-                    for columna in columnas:
-                        assert isinstance(columna, Column)
-                        i += 1
-                        if columna.is_key is False:
-                            f.write(self.espacio(5) + str(nombreObjeto).lower() + '.' + columna.colname)
-
-                            if i < len(columnas):
-                                f.write(',\n')
-
-                        if i >= len(columnas):
-                            f.write(',\n')
-                            j = 0
-                            for ide in ids:
-                                if j > 0:
-                                    f.write(',\n' + self.espacio(5) + str(nombreObjeto).lower() + '.' + ide )
-                                else:
-                                    f.write(self.espacio(5) + str(nombreObjeto).lower() + '.' + ide )
-                                j += 1
-
-                            f.write('))\n')
                     f.write('\n\n')
                     f.close()
         except:
             print(sys.exc_info()[0])
             raise
+
+
 
     def plural(self, palabra=None):
         if palabra is not None:
