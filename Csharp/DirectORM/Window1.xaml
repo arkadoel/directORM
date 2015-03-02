@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window
+	x:Class="DirectORM.Window1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Title="DirectORM"
+	Width="679"
+	Height="526">
+	
+	<Grid
+		Background="Gainsboro">
+		<TreeView
+			Name="TWTablas"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			Width="209"
+			FontFamily="Courier New"
+			FontSize="14"
+			Height="334"
+			VerticalAlignment="Top"
+			Margin="8,30.5,0,0"
+			BorderBrush="#FF494949">
+			<TreeViewItem
+				Header="Tablas"
+				Name="NodoTablas"
+				FontWeight="Bold"></TreeViewItem>
+		</TreeView>
+		<Button
+			Content="+"
+			Name="btnAddTabla"
+			Click="agregarTablaTreeView"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			Width="28"
+			Height="23"
+			VerticalAlignment="Top"
+			Margin="9,373.5,0,0" />
+		<Button
+			Content="-"
+			Name="btnQuitarTabla"
+			Click="quitarTablaTreeView"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Margin="46,373.5,0,0"
+			Width="28"
+			Height="23" />
+		<Label
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Margin="230.5,30.5,0,0"
+			Width="100"
+			Height="28"
+			Content="Nombre tabla:" />
+		<TextBox
+			Grid.Column="0"
+			Grid.Row="0"
+			VerticalAlignment="Top"
+			Height="24"
+			Name="txtNombreTabla"
+			Width="177"
+			HorizontalAlignment="Left"
+			Margin="324.5,30.5,0,0"
+			BorderBrush="#FF494949" />
+		<Button
+			Content="Guardar cambios"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Right"
+			Width="139"
+			Name="btnGuardarCambiosTabla"
+			Click="guardarCambiosTabla"
+			Height="23"
+			VerticalAlignment="Top"
+			Margin="0,31.5,13.5,0" />
+		<DataGrid
+			FontFamily="Courier New"
+			FontSize="14"
+			Grid.Column="0"
+			Grid.Row="0"
+			AutoGenerateColumns="False"
+			Width="421"
+			Name="dgridColumnas"
+			Height="296"
+			VerticalAlignment="Top"
+			Margin="236.5,67.5,11.5,0">
+			<DataGrid.Columns>
+				<DataGridTextColumn
+					Header="Nombre"
+					Binding="{Binding Path=Nombre}" />
+				<DataGridComboBoxColumn
+					x:Name="combo"
+					Header="Tipo de dato"
+					ItemsSource="{Binding Path=TIPOS_DE_DATOS}"
+					SelectedItemBinding="{Binding Path=TipoDato}" >
+				</DataGridComboBoxColumn>
+				<DataGridCheckBoxColumn
+					Header="Es clave"
+					Binding="{Binding Path=isKey}" />
+			</DataGrid.Columns>
+		</DataGrid>
+		<Label
+			Content="Espacio de nombres padre:"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			Width="166"
+			Height="29"
+			VerticalAlignment="Top"
+			Margin="9.5,409,0,0" />
+		<TextBox
+			BorderBrush="#FF494949"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Margin="164.5,409,0,0"
+			Width="197"
+			Height="25"
+			Name="txtNamespace" />
+		<Button
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Right"
+			VerticalAlignment="Bottom"
+			Margin="0,0,4.5,5"
+			Width="175"
+			Height="28"
+			Content="GENERAR"
+			Name="btnGenerar"
+			Click="btnGenerar_Click" />
+	</Grid>
+</Window>

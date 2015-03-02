@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window
+	x:Class="DirectORM.Window1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Title="DirectORM"
+	Width="674"
+	Height="481">
+	<Grid
+		Background="Gainsboro">
+		<TreeView
+			Name="TWTablas"
+			FontFamily="Courier New"
+			FontSize="14"
+			BorderBrush="#FF494949"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Margin="8,67.5,0,0"
+			Width="263"
+			Height="334">
+			<TreeViewItem
+				Header="Tablas"
+				Name="NodoTablas"
+				FontWeight="Bold"></TreeViewItem>
+		</TreeView>
+		<Button
+			Content="+"
+			Name="btnAddTabla"
+			Click="agregarTablaTreeView"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Margin="9,410.5,0,0"
+			Width="28"
+			Height="23" />
+		<Button
+			Content="-"
+			Name="btnQuitarTabla"
+			Click="quitarTablaTreeView"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Margin="46,410.5,0,0"
+			Width="28"
+			Height="23" />
+		<Label
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Margin="230.5,30.5,0,0"
+			Width="100"
+			Height="28"
+			Content="Nombre tabla:" />
+		<TextBox
+			Grid.Column="0"
+			Grid.Row="0"
+			VerticalAlignment="Top"
+			Height="24"
+			Name="txtNombreTabla"
+			Width="177"
+			HorizontalAlignment="Left"
+			Margin="324.5,30.5,0,0"
+			BorderBrush="#FF494949" />
+		<Button
+			Content="Guardar cambios"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Right"
+			Width="139"
+			Name="btnGuardarCambiosTabla"
+			Click="guardarCambiosTabla"
+			Height="23"
+			VerticalAlignment="Top"
+			Margin="0,31.5,13.5,0" />
+		<DataGrid
+			FontFamily="Courier New"
+			FontSize="14"
+			AutoGenerateColumns="False"
+			Name="dgridColumnas"
+			MinHeight="297"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Stretch"
+			Margin="296.5,67.5,11.5,84.5"
+			MinWidth="356">
+			<DataGrid.Columns>
+				<DataGridTextColumn
+					Header="Nombre"
+					Binding="{Binding Path=Nombre}" />
+				<DataGridTextColumn
+					Header="Tipo de dato"
+					Binding="{Binding Path=TipoDato}" />
+				<DataGridCheckBoxColumn
+					Header="Es clave"
+					Binding="{Binding Path=isKey}" />
+			</DataGrid.Columns>
+		</DataGrid>
+		<Label
+			Content="Nombre del paquete:"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Bottom"
+			Margin="314.5,0,0,52.5"
+			Width="130"
+			Height="29" />
+		<TextBox
+			BorderBrush="#FF494949"
+			Name="txtNamespace"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Bottom"
+			Margin="453.5,0,0,52.5"
+			Width="197"
+			Height="25" />
+		<Button
+			Content="GENERAR"
+			Name="btnGenerar"
+			Click="btnGenerar_Click"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Right"
+			VerticalAlignment="Bottom"
+			Margin="0,0,11.5,8"
+			Width="175"
+			Height="28" />
+		<Button
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			Width="208"
+			Height="23"
+			VerticalAlignment="Top"
+			Margin="9,31.5,0,0"
+			Content="Cargar desde archivo XML"
+			Name="btnCargarXML"
+			Click="CargarDesdeXML" />
+	</Grid>
+</Window>

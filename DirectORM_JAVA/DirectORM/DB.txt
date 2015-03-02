@@ -1,0 +1,81 @@
+﻿
+//////////// GESTOR DB ////////////////////////////////
+
+package directormjava;
+
+import com.mysql.jdbc.Connection;
+import com.mysql.jdbc.Statement;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ * Primera version: 29-jul-2013 21:58:42
+ * @author 
+ *         fer.d.minguela@gmail.com
+ */
+public class GestorDB {
+
+    private static Connection _conn = null;
+    public static String RutaDB="localhost:3306/dblatte";
+    public static String LoginName="nan";
+    public static String Password="florcanela";
+    
+    public static Connection getConnection(){
+        
+        if(_conn!=null){
+            finalizarConexion();
+        }
+        
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+            _conn= (Connection) DriverManager.getConnection("jdbc:mysql://" + RutaDB, LoginName, Password);
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+        
+        return _conn;
+    }
+    
+    public static void finalizarConexion(){
+        if(_conn !=null){
+            try {
+                _conn.close();
+            } catch (SQLException ex) {
+               ex.printStackTrace();
+            }
+        }
+    }
+    
+    public static ResultSet Consulta(String _sql){
+        Connection con = GestorDB.getConnection();
+        ResultSet rs= null;
+        try{
+            Statement stmt = (Statement) con.createStatement();
+            rs=stmt.executeQuery(_sql);
+            /*while(rs.next()) {
+                //System.out.println(rs.getString(“login”)+”\t”+rs.getString(“password”));
+            }*/
+        }catch(Exception ex){
+            
+        }
+        return rs;
+    }
+    
+    public static int Ejecutar(String _sql){
+        int respuesta=-1;
+        
+        try{
+            Statement stmt = (Statement) GestorDB.getConnection().createStatement();
+            respuesta = stmt.executeUpdate(_sql);
+            
+        }catch(Exception ex){
+            
+        }
+        
+        return respuesta;
+    }
+}
+

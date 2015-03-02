@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+# SharpDevelop 4.2.2.8818
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectORM2013", "DirectORM\DirectORM2013.csproj", "{AE22C121-BF3F-45DC-8A82-5B1275165C1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pruebas", "Pruebas\Pruebas.csproj", "{5868CE7C-94A5-4688-936E-EC8BAC78C478}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectORM2015", "DirectORM2015\DirectORM2015.csproj", "{FB67EC80-9D02-4CDA-A0F7-CB9C2D917FEF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AE22C121-BF3F-45DC-8A82-5B1275165C1B}.Debug|x86.Build.0 = Debug|x86
+		{AE22C121-BF3F-45DC-8A82-5B1275165C1B}.Debug|x86.ActiveCfg = Debug|x86
+		{AE22C121-BF3F-45DC-8A82-5B1275165C1B}.Release|x86.Build.0 = Release|x86
+		{AE22C121-BF3F-45DC-8A82-5B1275165C1B}.Release|x86.ActiveCfg = Release|x86
+		{5868CE7C-94A5-4688-936E-EC8BAC78C478}.Debug|x86.Build.0 = Debug|x86
+		{5868CE7C-94A5-4688-936E-EC8BAC78C478}.Debug|x86.ActiveCfg = Debug|x86
+		{5868CE7C-94A5-4688-936E-EC8BAC78C478}.Release|x86.Build.0 = Release|x86
+		{5868CE7C-94A5-4688-936E-EC8BAC78C478}.Release|x86.ActiveCfg = Release|x86
+		{FB67EC80-9D02-4CDA-A0F7-CB9C2D917FEF}.Debug|x86.Build.0 = Debug|x86
+		{FB67EC80-9D02-4CDA-A0F7-CB9C2D917FEF}.Debug|x86.ActiveCfg = Debug|x86
+		{FB67EC80-9D02-4CDA-A0F7-CB9C2D917FEF}.Release|x86.Build.0 = Release|x86
+		{FB67EC80-9D02-4CDA-A0F7-CB9C2D917FEF}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+EndGlobal

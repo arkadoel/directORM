@@ -1,0 +1,175 @@
+﻿<?xml version="1.0"?>
+<!--Esquema base de datos hecha para pasarla a JAVA y mediante
+	DirectORM que se generen las clases y objetos pertinentes.
+	queda pendiente:
+		->hacer un objeto para manejar fechas facilmente ('Datetime'), 
+		de momento los campos fecha se pondran como texto (String)
+		->meter en DirectORM tipo de dato 'float'
+ -->
+<Tablas>
+	<Usuario>
+		<loginName tipo="varchar" iskey="true" />
+		<password tipo="varchar" />
+		<isActive tipo="bool" />
+		<isApproved tipo="bool" />
+		<realName tipo="varchar" />
+		<email tipo="varchar" />
+		<photoUrl tipo="varchar" />
+		<mobile tipo="varchar" />
+		<phone tipo="varchar" />
+		<postalCode tipo="varchar" />
+		<country tipo="varchar" />
+		<stateOrRegion tipo="varchar" />
+		<village tipo="varchar" />
+		<personType tipo="varchar" >
+			<!--persona fisica
+				persona juridica
+			-->
+		</personType>
+		<userType tipo="varchar" >
+			<!--
+				NaN
+				Programmer
+				Entrepreneur
+				ONG-ONL
+				Company
+			-->
+		</userType>
+	</Usuario>
+	<PersonaFisica>
+		<NIF tipo="varchar" isKey="true" />
+		<loginName tipo="varchar" isKey="true" />
+		<surname tipo="varchar" />
+		<birthday tipo="varchar" />		
+	</PersonaFisica>
+	<ExperienciaLaboral>
+		<loginName tipo="varchar" isKey="true" />
+		<idPuesto tipo="int" isKey="true" />
+		<companyName tipo="varchar" />
+		<startDate tipo="varchar" />
+		<endDate tipo="varchar" />
+		<cargo tipo="varchar" />
+		<description tipo="varchar" />
+	</ExperienciaLaboral>
+	<SitiosWeb>
+		<loginName tipo="varchar" isKey="true" />
+		<idSitio tipo="int" isKey="true" />
+		<siteName tipo="varchar" />
+		<description tipo="varchar" />		
+	</SitiosWeb>
+	<Educacion>
+		<loginName tipo="varchar" isKey="true" />
+		<idTitulo tipo="int" isKey="true" />
+		<titulationName tipo="varchar" />
+		<startDate tipo="varchar" />
+		<endDate tipo="varchar" />
+		<educationCenter tipo="varchar" />
+		<centerType tipo="varchar" >
+			<!--
+				Universidad
+				Instituto
+				Colegio
+				Academia
+			-->
+		</centerType>
+		<educationType tipo="varchar">
+			<!--
+				Estatal
+				Complementaria
+			-->
+		</educationType>
+	</Educacion>
+	<PersonaJuridica>
+		<loginName tipo="varchar" isKey="true" />
+		<cif tipo="varchar" isKey="true" />
+		<bankAccount tipo="varchar" />
+	</PersonaJuridica>
+	<Suscripcion>
+		<id tipo="int" isKey="true" />
+		<loginName tipo="varchar" isKey="true" />
+		<startDate tipo="varchar" />
+		<endDate tipo="varchar" />
+		<price tipo="float" />
+	</Suscripcion>
+	<Factura>
+		<loginName tipo="varchar" isKey="true" />
+		<idFactura tipo="int" isKey="true"/>
+		<printDate tipo="varchar" />
+		<iva tipo="int" />
+		<subtotal tipo="float" />
+	</Factura>
+	<LineaFactura>
+		<loginName tipo="varchar" isKey="true" />
+		<idFactura tipo="int" isKey="true" />
+		<idLineaFactura tipo="int" isKey="true" />
+		<concepto tipo="varchar" />
+		<cantidad tipo="int" />
+		<precio tipo="float" />
+	</LineaFactura>
+	<Proyecto>
+		<projectID tipo="varchar" isKey="true" />
+		<projectName tipo="varchar" />
+		<teoricalStartDate tipo="varchar" />
+		<teoricalEndDate tipo="varchar" />
+		<realStartDate tipo="varchar" />
+		<description tipo="varchar" />
+		<isActive tipo="bool" />
+		<isApproved tipo="bool" />
+		<developMode tipo="varchar" >
+			<!--
+				NaNonly
+				NanAndOthers
+				Incubator
+				Community
+			-->
+		</developMode>
+	</Proyecto>
+	<GrupoTarea>
+		<projectID tipo="varchar" isKey="true" />
+		<groupID tipo="varchar" isKey="true" />
+		<groupName tipo="varchar" />
+	</GrupoTarea>
+	<Tarea>
+		<projectID tipo="varchar" isKey="true" />
+		<groupID tipo="varchar" isKey="true" />
+		<taskID tipo="varchar" isKey="true" />
+		<teoricalStartDate tipo="varchar" />
+		<teoricalEndDate tipo="varchar" />
+		<realStartDate tipo="varchar" />
+		<realEndDate tipo="varchar" />
+		<taskName tipo="varchar" />
+		<description tipo="varchar" />
+		<state tipo="varchar" >
+			<!--
+				Propuesta
+				Activa
+				Cerrada
+			-->
+		</state>
+		<svnIssue tipo="varchar" />
+	</Tarea>
+	<ParteTrabajo>
+		<loginName tipo="varchar" isKey="true" />
+		<date tipo="varchar" isKey="true" />
+		<projectID tipo="varchar" isKey="true" />
+		<groupID tipo="varchar" isKey="true" />
+		<taskID tipo="varchar" isKey="true" />
+		<workTime tipo="float" />
+		<description tipo="varchar" />
+	</ParteTrabajo>
+	<UsuarioProponeProyecto>
+		<loginName tipo="varchar" isKey="true" />
+		<projectID tipo="varchar" isKey="true" />
+		<date tipo="varchar" isKey="true" />
+		<isApproved tipo="bool" />
+	</UsuarioProponeProyecto>
+	<UsuarioAutorizadoEnProyecto>
+		<loginName tipo="varchar" isKey="true" />
+		<projectID tipo="varchar" isKey="true" />
+		<startDate tipo="varchar" />
+		<endDate tipo="varchar" />
+		<isBlocked tipo="bool" />
+		<isAuthorizedInSVN tipo="bool" />
+		<isApproved tipo="bool" />
+	</UsuarioAutorizadoEnProyecto>
+</Tablas>
