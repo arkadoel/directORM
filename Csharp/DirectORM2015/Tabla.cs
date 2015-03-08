@@ -26,10 +26,12 @@ namespace DirectORM
 		public Table(string nombre){
 			this.TableName = nombre;
 			Cols = new List<TableColumn>();
+			/*			
 			Cols.Add(new TableColumn("id", "int", true, true));
 			Cols.Add(new TableColumn("fecha", "datetime"));
 			Cols.Add(new TableColumn("campo", "varchar", true));
 			Cols.Add(new TableColumn("numero", "int"));
+			*/
 		}
 	}
 }

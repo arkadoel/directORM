@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DirectORM>
+  <table name="Nacimiento">
+    <column name="id" type="int" key="true" auto_increment="true" />
+    <column name="fecha" type="datetime" />
+    <column name="campo" type="varchar" key="true" />
+    <column name="numero" type="int" />
+  </table>
+  <table name="Persona">
+    <column name="id" type="int" key="true" auto_increment="true" />
+    <column name="nombre" type="varchar" />
+    <column name="apellidos" type="varchar" />
+    <column name="telefono" type="int" />
+  </table>
+</DirectORM>

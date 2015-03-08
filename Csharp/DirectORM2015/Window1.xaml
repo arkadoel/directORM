@@ -1,30 +1,36 @@
-﻿<Window x:Class="DirectORM2015.Window1"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window
+	x:Class="DirectORM2015.Window1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	Title="DirectORM"
-	Width="679"
-	Height="526">
-	
-	<Grid
+	Height="526"
+	Width="900">
+    <Grid
 		Background="Gainsboro">
-		<TreeView
+        <TreeView
 			Name="TWTablas"
 			Grid.Column="0"
 			Grid.Row="0"
 			HorizontalAlignment="Left"
-			Width="209"
+			Width="258"
 			FontFamily="Courier New"
 			FontSize="14"
 			Height="334"
 			VerticalAlignment="Top"
-			Margin="8,30.5,0,0"
+			Margin="8,30,0,0"
 			BorderBrush="#FF494949">
-			<TreeViewItem
-				Header="Tablas"
+            <TreeViewItem
+		
 				Name="NodoTablas"
-				FontWeight="Bold"></TreeViewItem>
-		</TreeView>
-		<Button
+				FontWeight="Bold">
+                <TreeViewItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="pack://siteoforigin:,,,/Resources/database-icon.png"/>
+                        <Label Content="Tablas" VerticalContentAlignment="Center" Height="25"/>
+                    </StackPanel>
+                </TreeViewItem.Header>
+            </TreeViewItem>
+        </TreeView>
+        <Button
 			Content="+"
 			Name="btnAddTabla"
 			Click="agregarTablaTreeView"
@@ -35,7 +41,7 @@
 			Height="23"
 			VerticalAlignment="Top"
 			Margin="9,373.5,0,0" />
-		<Button
+        <Button
 			Content="-"
 			Name="btnQuitarTabla"
 			Click="quitarTablaTreeView"
@@ -46,16 +52,16 @@
 			Margin="46,373.5,0,0"
 			Width="28"
 			Height="23" />
-		<Label
+        <Label
 			Grid.Column="0"
 			Grid.Row="0"
 			HorizontalAlignment="Left"
 			VerticalAlignment="Top"
-			Margin="230.5,30.5,0,0"
+			Margin="284,30,0,0"
 			Width="100"
 			Height="28"
 			Content="Nombre tabla:" />
-		<TextBox
+        <TextBox VerticalContentAlignment="Center"
 			Grid.Column="0"
 			Grid.Row="0"
 			VerticalAlignment="Top"
@@ -63,9 +69,9 @@
 			Name="txtNombreTabla"
 			Width="177"
 			HorizontalAlignment="Left"
-			Margin="324.5,30.5,0,0"
+			Margin="389,30,0,0"
 			BorderBrush="#FF494949" />
-		<Button
+        <Button
 			Content="Guardar cambios"
 			Grid.Column="0"
 			Grid.Row="0"
@@ -76,66 +82,101 @@
 			Height="23"
 			VerticalAlignment="Top"
 			Margin="0,31.5,13.5,0" />
-		<DataGrid
+        <DataGrid
 			FontFamily="Courier New"
 			FontSize="14"
+			AutoGenerateColumns="False"
+			Name="dgridColumnas"
 			Grid.Column="0"
 			Grid.Row="0"
-			AutoGenerateColumns="False"
-			Width="421"
-			Name="dgridColumnas"
-			Height="296"
-			VerticalAlignment="Top"
-			Margin="236.5,67.5,11.5,0">
-			<DataGrid.Columns>
-				<DataGridTextColumn
+			HorizontalAlignment="Stretch"
+			Margin="284,66,13,133">
+            <DataGrid.Columns>
+                <DataGridTextColumn
 					Header="Nombre"
 					Binding="{Binding Path=Name}" />
-				<DataGridComboBoxColumn
+                <DataGridComboBoxColumn
 					x:Name="combo"
 					Header="Tipo de dato"
 					ItemsSource="{Binding Path=TIPOS_DE_DATOS}"
-					SelectedItemBinding="{Binding Path=ValueType}" >
-				</DataGridComboBoxColumn>
-				<DataGridCheckBoxColumn
+					SelectedItemBinding="{Binding Path=ValueType}"></DataGridComboBoxColumn>
+                <DataGridCheckBoxColumn
 					Header="Es clave"
 					Binding="{Binding Path=isKey}" />
-			<DataGridCheckBoxColumn
-					Header="Es clave"
+                <DataGridCheckBoxColumn
+					Header="Auto incrementable"
 					Binding="{Binding Path=AutoIncrement}" />
-			</DataGrid.Columns>
-		</DataGrid>
-		<Label
+            </DataGrid.Columns>
+        </DataGrid>
+        <Label
 			Content="Espacio de nombres padre:"
 			Grid.Column="0"
 			Grid.Row="0"
 			HorizontalAlignment="Left"
-			Width="166"
-			Height="29"
-			VerticalAlignment="Top"
-			Margin="9.5,409,0,0" />
-		<TextBox
+			VerticalAlignment="Bottom"
+			Margin="9,0,0,9"
+			Width="155"
+			Height="29" />
+        <TextBox
 			BorderBrush="#FF494949"
+			VerticalContentAlignment="Center"
+			Text="DirectORM"
+			Name="txtNamespace"
 			Grid.Column="0"
 			Grid.Row="0"
 			HorizontalAlignment="Left"
-			VerticalAlignment="Top"
-			Margin="164.5,409,0,0"
-			Width="197"
-			Height="25"
-			VerticalContentAlignment="Center"
-			Text="DirectORM"
-			Name="txtNamespace" />
-		<Button
+			VerticalAlignment="Bottom"
+			Margin="164,0,0,9"
+			Width="198"
+			Height="25" />
+        <Button
 			Grid.Column="0"
 			Grid.Row="0"
 			HorizontalAlignment="Right"
 			VerticalAlignment="Bottom"
-			Margin="0,0,4.5,5"
-			Width="175"
+			Margin="0,0,13,6"
+			Width="132"
 			Height="28"
 			Content="GENERAR"
 			Name="btnGenerar"
 			Click="btnGenerar_Click" />
-	</Grid>
+        <Button
+			Content="Cargar XML"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Margin="9,405.5,0,0"
+			Width="98"
+			Height="23"
+			Name="btnCargarXML"
+			Click="ImportaXML" />
+        <Button
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Margin="116,406,0,0"
+			Width="101"
+			Height="22"
+			Content="Guardar a XML"
+			Name="GuardarXML"
+			Click="GuardaXML" />
+        <ComboBox x:Name="cmbMotor" HorizontalAlignment="Right" SelectedIndex="0" Margin="0,0,205,6"  VerticalAlignment="Bottom" Width="184" Height="28">
+            <ComboBox.Items>
+                <ComboBoxItem Name="SQLClient">SQLClient</ComboBoxItem>
+                <ComboBoxItem Name="OleDB">OleDB</ComboBoxItem>
+            </ComboBox.Items>
+        </ComboBox>
+        <Label
+        	Content="Motor: "
+        	Grid.Column="0"
+        	Grid.Row="0" HorizontalContentAlignment="Right"
+        	HorizontalAlignment="Right"
+        	VerticalAlignment="Bottom"
+        	Margin="0,0,394,6"
+        	Width="122"
+        	Height="29" />
+
+    </Grid>
 </Window>

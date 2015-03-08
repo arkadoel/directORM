@@ -14,7 +14,10 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+
 using DirectORM;
+using Microsoft.Win32;
+using System.Windows.Media.Imaging;
 
 namespace DirectORM2015
 {
@@ -26,7 +29,7 @@ namespace DirectORM2015
 		//private Logica logica = new Logica();
 		private DirectORM.Table tablaEditada = null;
 		private List<string> TIPOS_DE_DATOS= new List<string>();
-		
+		private Logica logica = null;
 		
 		public Window1()
 		{
@@ -34,6 +37,7 @@ namespace DirectORM2015
 			TIPOS_DE_DATOS.Add("varchar");
 			TIPOS_DE_DATOS.Add("int");
 			TIPOS_DE_DATOS.Add("datetime");
+            TIPOS_DE_DATOS.Add("float");
 			TWTablas.SelectedItemChanged += new RoutedPropertyChangedEventHandler<object>(TWTablas_SelectedItemChanged);
 		}
 
@@ -53,12 +57,39 @@ namespace DirectORM2015
 		void agregarTablaTreeView(object sender, RoutedEventArgs e)
 		{
 			TreeViewItem twItem = new TreeViewItem();			
-			twItem.Header="Nacimiento" ;
+			twItem.Header="Tabla" ;
 			
-			twItem.Tag = new Table("Nacimiento");
+			twItem.Tag = new Table("Tabla");
 			NodoTablas.Items.Add(twItem);
 			NodoTablas.ExpandSubtree();
 		}
+		
+		public void agregarTabla(Table t)
+		{
+			TreeViewItem twItem = new TreeViewItem();
+            PonerNombreTablaIcono(t.TableName, twItem);
+			
+			twItem.Tag = t;
+			NodoTablas.Items.Add(twItem);
+			NodoTablas.ExpandSubtree();
+		}
+
+        private void PonerNombreTablaIcono(String nombre, TreeViewItem twItem)
+        {
+            Image imagen = new Image();
+            imagen.Height = 20;
+            imagen.Width = 20;
+            imagen.VerticalAlignment = System.Windows.VerticalAlignment.Center;
+            imagen.Source = PonerIcono("pack://siteoforigin:,,,/Resources/Table-icon.png");
+            Label lblTabla = new Label();
+            lblTabla.Content = nombre;
+
+            StackPanel panel = new StackPanel();
+            panel.Orientation = Orientation.Horizontal;
+            panel.Children.Add(imagen);
+            panel.Children.Add(lblTabla);
+            twItem.Header = panel;
+        }
 		
 		void quitarTablaTreeView(object sender, RoutedEventArgs e)
 		{
@@ -70,27 +101,78 @@ namespace DirectORM2015
 			tablaEditada.TableName = txtNombreTabla.Text;
 			TreeViewItem twitem=TWTablas.SelectedItem as TreeViewItem;
 			twitem.Tag = tablaEditada;
-			twitem.Header = txtNombreTabla.Text;
+            PonerNombreTablaIcono(txtNombreTabla.Text, twitem);
 		}
+
+        private ImageSource PonerIcono(string path)
+        {
+            return new BitmapImage(new Uri(path));
+        }
 		
 		void btnGenerar_Click(object sender, RoutedEventArgs e)
 		{
-			/*
+            switch (cmbMotor.Text.ToString().ToUpper())
+            {
+                case "SQLCLIENT":
+                    logica = new Logica(Logica.MOTORES.SQL_CLIENT);
+                    break;
+                case "OLEDB":
+                    logica = new Logica(Logica.MOTORES.OLE_DB);
+                    break;
+            }
+            
 			logica.Tablas.Clear();
 			logica.NAMESPACE = txtNamespace.Text;
 			
 			foreach(TreeViewItem tw in NodoTablas.Items){
-				logica.Tablas.Add(tw.Tag as Tabla);
+				logica.Tablas.Add(tw.Tag as Table);
 			}
 			
 			VentanaResultado v = new VentanaResultado();			
 			logica.ventana = v;
 			logica.procesar();
-			v.Show();
-			
-			*/
+			v.Show();		
 			
 			MessageBox.Show("Proceso terminado");
+		}
+		
+		void GuardaXML(object sender, RoutedEventArgs e)
+		{
+			SaveFileDialog dialogo = new SaveFileDialog();
+			dialogo.Filter = "xml |*.xml";
+			dialogo.ShowDialog();
+			
+			if(string.IsNullOrWhiteSpace( dialogo.FileName) == false)
+			{
+				List<Table> tablas = new List<Table>();
+				foreach(TreeViewItem tw in NodoTablas.Items)
+				{
+					tablas.Add(tw.Tag as Table);
+				}
+				
+				gestorXML.ExportarXML(tablas, dialogo.FileName);
+				MessageBox.Show("Exportacion terminada","Terminado", 
+				                MessageBoxButton.OK, 
+				                MessageBoxImage.Information);
+			}
+		}
+		
+		void ImportaXML(object sender, RoutedEventArgs e)
+		{
+			OpenFileDialog dialogo = new OpenFileDialog();
+			dialogo.Filter = "xml |*.xml";
+			dialogo.ShowDialog();
+			
+			if(string.IsNullOrWhiteSpace( dialogo.FileName) == false)
+			{
+				NodoTablas.Items.Clear();
+				List<Table> tablas = gestorXML.ImportarXML(dialogo.FileName);
+				foreach(var tabla in tablas)
+				{
+					agregarTabla(tabla);
+				}
+			}
+			
 		}
 	}
 }
