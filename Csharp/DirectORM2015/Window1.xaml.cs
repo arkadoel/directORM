@@ -30,6 +30,7 @@ namespace DirectORM2015
 		private DirectORM.Table tablaEditada = null;
 		private List<string> TIPOS_DE_DATOS= new List<string>();
 		private Logica logica = null;
+        private String FicheroXML = "";
 		
 		public Window1()
 		{
@@ -102,6 +103,11 @@ namespace DirectORM2015
 			TreeViewItem twitem=TWTablas.SelectedItem as TreeViewItem;
 			twitem.Tag = tablaEditada;
             PonerNombreTablaIcono(txtNombreTabla.Text, twitem);
+
+            if (FicheroXML != "")
+            {
+                GuardarArchivoXML(FicheroXML);
+            }
 		}
 
         private ImageSource PonerIcono(string path)
@@ -144,18 +150,30 @@ namespace DirectORM2015
 			
 			if(string.IsNullOrWhiteSpace( dialogo.FileName) == false)
 			{
-				List<Table> tablas = new List<Table>();
-				foreach(TreeViewItem tw in NodoTablas.Items)
-				{
-					tablas.Add(tw.Tag as Table);
-				}
-				
-				gestorXML.ExportarXML(tablas, dialogo.FileName);
+                GuardarArchivoXML(dialogo.FileName);
 				MessageBox.Show("Exportacion terminada","Terminado", 
 				                MessageBoxButton.OK, 
 				                MessageBoxImage.Information);
 			}
 		}
+
+        /// <summary>
+        /// Exporta automaticamente al fichero que se esta usando
+        /// </summary>
+        /// <param name="destino"></param>
+        private void GuardarArchivoXML(string destino)
+        {
+            if (System.IO.File.Exists(destino) == true)
+            {
+                List<Table> tablas = new List<Table>();
+                foreach (TreeViewItem tw in NodoTablas.Items)
+                {
+                    tablas.Add(tw.Tag as Table);
+                }
+
+                gestorXML.ExportarXML(tablas, destino);
+            }
+        }
 		
 		void ImportaXML(object sender, RoutedEventArgs e)
 		{
@@ -171,6 +189,8 @@ namespace DirectORM2015
 				{
 					agregarTabla(tabla);
 				}
+
+                FicheroXML = dialogo.FileName;
 			}
 			
 		}

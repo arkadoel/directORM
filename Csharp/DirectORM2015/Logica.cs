@@ -273,8 +273,15 @@ namespace DirectORM
 			txt +="\t\tprivate const String SELECT = \"SELECT * FROM " + tb.TableName +"\";\r\n\r\n";
 			
 			txt+="\t\tprivate static List<"+ tb.TableName +"> _lista = null;\r\n\r\n";
+
+            //ToList()
+            txt += "\t\tpublic static List<" + tb.TableName + "> ToList()\r\n\t\t{\r\n";
+            txt += @"
+                    return ToList("");
+                    }
+                    \r\n";
 			
-			txt +="\t\tpublic static List<"+ tb.TableName +"> toList()\r\n\t\t{\r\n";
+			txt +="\t\tpublic static List<"+ tb.TableName +"> ToList(string filtro)\r\n\t\t{\r\n";
         
 			txt+=@"
                 if (_lista == null)
@@ -282,7 +289,16 @@ namespace DirectORM
                     _lista = new List<"+ tb.TableName + @">();
                 }
 
-                _lista = mapeoObjeto(GestorDB.Consulta(SELECT));
+                if (string.IsNullOrWhiteSpace(filtro))
+                {
+                    _lista = mapeoObjeto(GestorDB.Consulta(SELECT));
+                }
+                else
+                {
+                    _lista = mapeoObjeto(GestorDB.Consulta(SELECT + " +
+                                                                      "\" where \"" +
+                                                                      @" + filtro));
+                }
 
                 return _lista;
 	
@@ -321,7 +337,7 @@ namespace DirectORM
 						
 						campo = "(_conf." + Capitalizar(col1.Name) + ".Year + \"/\" + _conf."+ Capitalizar(col1.Name) + ".Month + \"/\" + _conf."+ Capitalizar(col1.Name) + ".Day)";
 					}
-                    if (col.ValueType.ToLower() == "string")
+                    if (col1.ValueType.ToLower() == "varchar")
                     {
                         txt += "\r\n\t\t\t\ts = s.Replace(\"@" + col1.Name + "\", " + campo + ");";
                     }
